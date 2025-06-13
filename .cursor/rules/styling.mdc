@@ -1,0 +1,129 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+## 1. Uvod in Filozofija
+
+**Namen:** Ta dokument definira temeljna pravila in smernice za vizualno podobo, uporabniško izkušnjo (UX) in uporabniški vmesnik (UI) aplikacije Inner. Namenjen je zagotavljanju konsistentnosti, kakovosti in želenega občutka skozi celotno aplikacijo.
+
+**Filozofija:** Oblikovanje Inner sledi načelom minimalizma, jasnosti in elegance. Ustvariti želimo **pomirjujoče, varno in zaupanja vredno digitalno okolje**, ki spodbuja introspekcijo in odprto komunikacijo. Videz naj bo moderen, tehnološko napreden ("glassy", "glowing"), a hkrati nevsiljiv in intuitiven, s poudarkom na Applovi estetiki kakovosti.
+
+**Uporaba Pravil:** Ta dokument je živa referenca. Vsa implementacija UI/UX mora slediti tem pravilom. Konsistentnost je ključna.
+
+---
+
+## 2. Temeljna Estetika in Občutek (Core Aesthetic & Mood)
+
+* **Splošna Estetika:** Minimalistična, "steklena" (glassy/frosted glass), čista, elegantna, podobna Applovemu dizajnu. [ref: User Request]
+* **Vzdušje (Mood):** Terapevtsko, pomirjujoče, varno, zasebno, spodbudno, kot "sproščen deževen poletni dan". [ref: User Request]
+* **Osnovno Načelo:** Jasnost in funkcionalnost imata prednost pred nepotrebno bleščavostjo. [cite: 1]
+
+---
+
+## 3. Barvna Paleta (Color Palette)
+
+* **Primarno Ozadje (Default Dark Mode):** Temno moder linearni gradient od zgoraj navzdol. Uporablja se kot ozadje večine zaslonov.
+    * *Referenca:* @tailwind.config.js ne specificira tega gradienta direktno, ampak služi kot konceptualni cilj. Implementacija bo v kodi.
+* **Barve Elementov (Core Semantic, Backgrounds, Borders, Component-Specific):**
+    * **Kontejnerji/Kartice:** Uporablja `component-bg: rgba(30, 47, 80, 0.35)`.
+    * **Vnosna Polja:** Ozadje `input-bg: #18274D`, obroba `input-border: #495C8A`.
+    * **Primarna Barva Besedila/Elementov:** `primary: #FFFFFF`.
+    * **Sekundarna Barva Besedila/Elementov:** `secondary: rgba(255, 255, 255, 0.7)`.
+    * **Placeholder Besedilo:** `placeholder: #7784A5` (temnejši), `placeholder-light: #A0AEC0` (svetlejši), `profile-placeholder: #6E7B9D`.
+    * **Obrobe Komponent:** `component-border: rgba(255, 255, 255, 0.1)`, `profile-card-border: #5E6E97`.
+    * **Specifične Komponente:**
+        * Sekundarni gumbi: `button-secondary-bg: rgba(255, 255, 255, 0.2)`.
+        * Gumbi v nastavitvah: `settings-btn-bg: rgba(61, 79, 126, 0.5)`.
+        * Gumb za odjavo: `logout-btn-bg: rgba(222, 18, 18, 0.5)`.
+    * **Poudarjena Barva (Accent/Glow):** Trenutno ni eksplicitno definirana kot `accent` v `tailwind.config.js`. Za 'glow' efekt se uporablja specifična senca (`start-session-glow`). Implicitno lahko štejemo `#3498DB` (iz `start-session-glow` definicije) kot referenčno poudarjeno barvo, če jo potrebujemo drugje.
+* **Pravilo Barv (Prilagojeno 60/30/10 za Dark Mode)[cite: 2]:**
+    * **~60% Glavno Ozadje:** Konceptualni temno modri gradient.
+    * **~30% Kontejnerji/Sekundarno Ozadje:** Elementi z `component-bg` ali `input-bg`.
+    * **~10% Poudarki (Accent):** Bela (`primary`) in svetlo siva (`secondary`) za besedila/ikone. `start-session-glow` senca za poudarjene gumbe. Ostale specifične barve (`logout-btn-bg`, itd.) po potrebi.
+
+---
+
+## 4. Tipografija (Typography)
+
+* **Pisava:** Uporaba **privzete sistemske pisave** platforme.
+* **Sistem Velikosti in Debelin (Definirano v `tailwind.config.js`):**
+    * **Debeline (`fontWeight`):**
+        * `light`: '300'
+        * `regular`: '400' (Za glavno besedilo)
+        * `medium`: '500'
+        * `bold`: '600' (Za naslove, poudarke)
+        * `extra-bold`: '700'
+        * *Opomba:* Prej omenjeni `Semibold` in `Regular` se mapirata na `bold` (600) in `regular` (400).
+    * **Velikosti (`fontSize`):**
+        * `title`: '56px' (lineHeight: '64px') - Glavni naslovi zaslonov
+        * `h1`: '36px' (lineHeight: '40px') - Večji podnaslovi
+        * `h2`: '28px' (lineHeight: '32px') - Srednji podnaslovi/sekcije
+        * `h3`: '22px' (lineHeight: '30px') - Manjši naslovi/pomembna sporočila
+        * `base`: '18px' (lineHeight: '24px') - Glavno besedilo (klepet, moduli)
+        * `sm`: '14px' (lineHeight: '20px') - Časovni žigi, opombe, labele
+* **Berljivost:** Zagotoviti zadosten kontrast (uporaba `primary`, `secondary` barv). Višina vrstic (`lineHeight`) je definirana skupaj z velikostjo pisave.
+
+---
+
+## 5. Postavitev in Razmiki (Layout & Spacing)
+
+* **Mrežni Sistem (Grid System): 8pt Grid System** [cite: 2]
+    * **Pravilo:** Vse vrednosti za `margin`, `padding` in po možnosti dimenzije elementov morajo biti **deljive z 8 ali vsaj s 4**.
+    * **Namen:** Ustvarja vizualni ritem, harmonijo in konsistentnost. NativeWind utility klasi (`p-2`, `m-4`, itd.) to omogočajo.
+* **Čista Vizualna Struktura (Clean Visual Structure)[cite: 1]:**
+    * Logično grupiranje, premišljeni razmiki, skrbna poravnava.
+
+---
+
+## 6. Oblikovanje Komponent (Component Styling)
+
+* **Glassmorphism ("Stekleni" Efekt):**
+    * Uporablja se za glavne kontejnerje, kartice modulov, chat oblačke.
+    * **Implementacija:** Doseže se s kombinacijo:
+        * Pol-prosojnega ozadja: Uporaba `component-bg: rgba(30, 47, 80, 0.35)`.
+        * Efekta zameglitve ozadja (Background Blur), če je podprto (npr. Expo BlurView).
+        * Tankega, svetlega roba: Uporaba `component-border: rgba(255, 255, 255, 0.1)`.
+* **Glow Efekti ("Sijaj"):**
+    * Uporablja se za **poudarjanje pomembnih interaktivnih elementov**.
+    * **Implementacija:** Definirana kot senca v `tailwind.config.js`:
+        * `start-session-glow: '0 0 15px 5px rgba(52, 152, 219, 0.35)'`
+* **Zaokroževanje Robov:**
+    * Standardno zaokroževanje: `borderRadius.standard: '12px'`.
+* **Ostale Sence:**
+    * Senca za gumbe pri avtentikaciji: `boxShadow['auth-button']: '0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)'`.
+* **Specifični Elementi:**
+    * **Gumbi (Pomembni):** Uporabljajo `start-session-glow`.
+    * **Chat Oblački:** Glassy efekt (`component-bg`, `component-border`).
+    * **Module Kartice:** Glassy efekt.
+    * **Vnosna Polja (Input Fields):** Ozadje `input-bg`, obroba `input-border`, placeholder tekst (`placeholder`, `placeholder-light`), zaokroževanje `standard`.
+
+---
+
+## 7. Animacije in Tranzicije (Animations & Transitions)
+
+* **Načelo:** Animacije naj bodo **subtilne, tekoče in smiselne**. Njihov namen je izboljšati UX, ne pa motiti uporabnika.
+* **Tranzicije Med Zasloni:** Uporaba privzetih ali rahlo prilagojenih tranzicij, ki jih nudi Expo Router (npr. fade, slide), za gladek občutek.
+* **Mikro-Interakcije:** Subtilne animacije ob pritisku gumbov, nalaganju podatkov (npr. nežen fade-in), morda prikazu novih sporočil.
+* **Implementacija:** Uporaba knjižnic kot sta `react-native-reanimated` ali `moti` za bolj kompleksne ali performantne animacije, če je potrebno.
+
+---
+
+## 8. Konsistentnost (Consistency)
+
+* **Nujnost:** Konsistentnost v dizajnu (barve, tipografija, razmiki, komponente) je ključna za profesionalen videz in intuitivno uporabo.
+* **Kako Doseči:**
+    * **Uporaba NativeWind:** Strogo upoštevanje utility razredov in definiranih barv/razmikov v konfiguraciji NativeWind (`tailwind.config.js`).
+    * **Reusable Komponente:** Ustvarjanje in dosledna uporaba komponent za ponavljajoče se elemente (npr. `GlassCard`, `GlowingButton`, `StyledTextInput`).
+    * **Upoštevanje Teh Pravil:** Vsa nova implementacija UI mora slediti tem smernicam.
+
+---
+
+## 9. Dostopnost (Accessibility)
+
+* **Osnovno Načelo:** Aplikacija naj bo uporabna za čim širši krog ljudi.
+* **MVP Fokus:**
+    * Zagotoviti **dober barvni kontrast** med besedilom in ozadjem.
+    * Uporabiti **smiselne oznake (accessibility labels)** za interaktivne elemente za podporo bralnikom zaslona (npr. VoiceOver, TalkBack).
+    * Zagotoviti dovolj **velika območja za dotik** (tap targets).
+* **(Kasnejše Faze):** Podrobnejša implementacija in testiranje dostopnosti.

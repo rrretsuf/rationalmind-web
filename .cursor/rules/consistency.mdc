@@ -1,0 +1,107 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+## 1. Uvod in Namen
+
+**Namen:** Ta dokument določa skupek pravil in smernic, katerih cilj je zagotoviti visoko stopnjo **konsistentnosti** v vseh vidikih razvoja spletne aplikacije Rational Mind. Konsistentnost izboljšuje berljivost kode, olajša vzdrževanje, zmanjšuje napake in zagotavlja enotno uporabniško izkušnjo.
+
+**Obveznost:** Vsa koda, komponente, stili in dokumentacija morajo slediti tem pravilom. Odstopanja so dovoljena le izjemoma in morajo biti utemeljena ter dokumentirana.
+
+**Vloga AI:** Pri generiranju nove kode ali funkcionalnosti mora AI najprej analizirati obstoječo kodno bazo spletne aplikacije (relevantne datoteke, komponente, storitve), da razume in **dosledno replicira** uveljavljene vzorce, poimenovanja, stile in arhitekturne odločitve.
+
+---
+
+## 2. Konsistentnost Kode (Code Consistency)
+
+### 2.1. Formatiranje in Stil Kode
+* **Orodja:** Uporaba **ESLint** in **Prettier** je obvezna za samodejno formatiranje kode in uveljavljanje stilskih pravil.
+* **Konfiguracija:** Pravila so definirana v konfiguracijskih datotekah `.eslintrc.js` (ali ekvivalent) in `.prettierrc` v korenu projekta. Te datoteke so **edini vir resnice** za formatiranje in lintanje.
+* **Proces:** Pred vsakim commitom je priporočljivo pognati skripte za lintanje in formatiranje (lahko avtomatizirano z Git hooks), da se zagotovi skladnost kode.
+
+### 2.2. Poimenovanje (Naming Conventions)
+* **Komponente (React/Next.js):** `PascalCase` (npr. `ChatBubble.tsx`, `WelcomePage.tsx`). Imena naj bodo opisna glede na funkcijo komponente.
+* **Datoteke in Mape (ne-komponente):** `kebab-case` (npr. `lib/auth-service.ts`, `components/ui`, `helpers/date-utils.ts`).
+* **Next.js Strani in Postavitve:** Imena datotek morajo slediti konvencijam App Routerja: `page.tsx`, `layout.tsx`, `loading.tsx`, `middleware.ts`.
+* **Spremenljivke in Funkcije:** `camelCase` (npr. `isLoading`, `currentUser`, `handleSignIn`). Imena naj jasno odražajo namen.
+* **Konstante:** `UPPER_SNAKE_CASE` (npr. `API_TIMEOUT`, `STRIPE_PUBLISHABLE_KEY`).
+* **Tipi in Vmesniki (TypeScript):** `PascalCase` (npr. `UserProfile`, `Message`, `SessionStatus`).
+* **Supabase Tabele/Stolpci:** `snake_case` (kot je definirano v obstoječi shemi baze, npr. `user_id`, `dynamic_profile`).
+
+### 2.3. TypeScript Uporaba
+* **Stroga Tipizacija:** Izkoristi prednosti TypeScripta. Uporabljaj eksplicitne tipe. Izogibaj se uporabi `any`, razen če je nujno potrebno in dobro utemeljeno.
+* **Vmesniki (Interfaces) vs Tipi (Types):** Uporabljaj `type` za definiranje props komponent in stanj. Uporabljaj `interface` za definiranje oblik objektov, ki jih je mogoče razširiti (extend). Bodi dosleden.
+* **Jasnost Tipov:** Tipi naj bodo dobro poimenovani in definirani blizu njihove uporabe ali v centraliziranih `types.ts` datotekah znotraj modulov (`lib/types.ts`).
+
+---
+
+## 3. Konsistentnost Uporabniškega Vmesnika (UI/UX Consistency)
+
+### 3.1. Vizualni Stil in Oblikovanje
+* **Obvezujoča Pravila:** Vsa implementacija UI **mora** striktno slediti stilom, definiranim v datoteki **`tailwind.config.ts`**. Ta datoteka je edini vir resnice za barve, pisave, razmike in druge vizualne elemente.
+* **Ključni Elementi:** Dosledna uporaba definirane barvne palete (temno modra gradientna ozadja, glassy/frosted poudarki, glow efekti), tipografskega sistema in 8pt grid sistema za razmike.
+* **Tailwind CSS:** **Obvezna** je uporaba pred-definiranih vrednosti in razredov iz `tailwind.config.ts`. Izogibaj se ad-hoc stilom ("magic numbers") neposredno v komponentah.
+
+### 3.2. Uporaba Komponent
+* **Ponovna Uporaba:** **Preden ustvariš novo komponento, preveri, ali že obstaja podobna v mapi `components/`.** Maksimiziraj ponovno uporabo za zagotavljanje vizualne in funkcionalne konsistence.
+* **Struktura Komponent:** Gradniki UI naj bodo locirani v `components/ui`. Kompleksnejše, sestavljene komponente, ki vključujejo logiko, so lahko v `components/`.
+* **Props:** Props komponent morajo biti jasno definirani z uporabo TypeScript tipov ali vmesnikov.
+
+### 3.3. Navigacija
+* **Next.js App Router:** Vsa navigacija med stranmi mora potekati preko `next/link` za deklarativno navigacijo in `next/navigation` (`useRouter`, `redirect`) za programatsko navigacijo.
+* **Postavitev:** Uporabljaj `layout.tsx` datoteke za definiranje deljenih postavitev znotraj poti.
+* **Gumb Nazaj:** Komponente, ki potrebujejo funkcionalnost za vrnitev, naj uporabljajo `router.back()` iz `useRouter`.
+
+---
+
+## 4. Konsistentnost Arhitekture in Logike
+
+### 4.1. Struktura Projekta
+* **Struktura Map:** Projekt **mora** slediti naslednji osnovni strukturi:
+    * `/app`: Vsebuje vse poti, strani in postavitve aplikacije.
+        * `/app/api`: Za API poti, ki se izvajajo na strežniku.
+    * `/components`: Globalno uporabne React komponente.
+        * `/components/ui`: Osnovni, stilizirani gradniki (gumbi, polja za vnos).
+    * `/lib`: Osnovna logika, storitve in pripomočki.
+        * `/lib/supabase`: Konfiguracija in pripomočki za Supabase klienta.
+        * `/lib/auth`: Kontekst in kaveljčki za avtentikacijo.
+        * `/lib/utils.ts`: Splošne pomožne funkcije.
+* **Komponente: Strežniške vs. Klientove:** Privzeto naj bodo vse komponente **strežniške (React Server Components)**. Direktivo **`'use client'`** dodaj le na vrh datotek tistih komponent, ki nujno potrebujejo interaktivnost na klientu (npr. uporabljajo `useState`, `useEffect`, ali event handlerje).
+
+### 4.2. Upravljanje Stanja (State Management)
+* **MVP Pristop:** Uporabljaj `useState` za lokalno stanje. Za deljenje globalnega stanja (npr. status avtentikacije) uporabi React `useContext`, kot je implementirano v `lib/auth/AuthContext.tsx`.
+
+### 4.3. API Klici
+* **Abstrakcija:** Vsi klici na Supabase (DB, Auth, Edge Functions) morajo biti enkapsulirani znotraj namenskih **storitvenih funkcij (service functions)**, lociranih v `lib/` (npr. `lib/session-service.ts`).
+* **Primer:** Namesto direktnega `supabase.from('messages').select()` v komponenti, ustvari funkcijo, ki izvede klic, in to funkcijo kliči iz komponente.
+* **Namen:** Ločevanje logike, lažje testiranje in enostavnejša zamenjava ali posodobitev API klicev.
+
+### 4.4. Obravnava Napak (Error Handling)
+* **Asinhroni Klici:** Vse asinhrono klice (API klici, Supabase operacije) obvezno ovij v `try...catch` bloke.
+* **Uporabniški Vmesnik:** Uporabniku prikaži **prijazna sporočila o napakah** z uporabo standardiziranega načina (npr. toast obvestilo, modalno okno, ali sporočilo pod vnosnim poljem).
+
+### 4.5. Logiranje (Logging)
+* **Centralizacija:** **Vsa sporočila (debug, info, warn, error) se morajo logirati izključno preko centralnega `Logger` modula** (`lib/logger.ts`), ki bo razširljiv za integracijo s Sentry.
+* **Okolje:** Logger mora razlikovati med razvojnim (`development`) in produkcijskim (`production`) okoljem. V razvoju uporablja `console.*`, v produkciji pa kliče Sentry.
+* **Občutljivi Podatki:** **Strogo prepovedano logiranje občutljivih uporabniških podatkov** (gesla, vsebina sporočil, osebni identifikatorji).
+
+---
+
+## 5. Konsistentnost Dokumentacije in Procesa
+
+### 5.1. Komentarji v Kodi
+* **Uporaba:** Komentarji se uporabljajo **zmerno in premišljeno**.
+* **Namen:**
+    1.  **Strukturiranje:** Za logično ločevanje večjih blokov kode znotraj datotek (npr. `// Core State Hooks`, `// Event Handlers`, `// Data Fetching Effects`).
+    2.  **Pojasnitev kompleksnosti:** Za razlago *zakaj* je bil uporabljen določen kompleksen algoritem ali pristop, ki morda ni očiten iz kode same.
+* **Prepoved:** Izogibaj se nepotrebnim, očitnim komentarjem, ki pojasnjujejo, kaj koda počne (npr. `// set user` nad `setUser(...)`). Koda mora biti sama po sebi čim bolj berljiva.
+
+### 5.2. Projektna Dokumentacija (Markdown)
+* **Ažurnost:** Vsi Markdown dokumenti (PRD, Tech Stack) morajo biti **ažurni** in odražati trenutno stanje načrta.
+* **Povezovanje:** Kjer je smiselno, dodaj reference med dokumenti za lažje razumevanje.
+
+### 5.3. Git Commit Sporočila
+* **Format:** Uporabljaj standardiziran format, kot je **Conventional Commits**.
+    * **Primeri:** `feat: add user authentication flow`, `fix: correct tailwind color configuration`, `docs: update PRD for web app`, `refactor: extract supabase client to lib`.
+* **Namen:** Omogoča lažje sledenje spremembam in boljše razumevanje zgodovine projekta.
