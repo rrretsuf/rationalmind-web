@@ -5,7 +5,7 @@
 import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
-  dsn: "https://76dbdef310b17ab3e085709fcfe06082@o4509428954365952.ingest.de.sentry.io/4509492727578704",
+  dsn: process.env.SENTRY_DSN,
 
   // Add optional integrations for additional features
   integrations: [
@@ -27,4 +27,6 @@ Sentry.init({
   debug: false,
 });
 
-export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
+export const onRouterTransitionStart =
+  // Guard against SDKs that don’t yet expose the helper
+  (Sentry as any).captureRouterTransitionStart ?? (() => undefined);

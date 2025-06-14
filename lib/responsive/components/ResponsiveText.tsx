@@ -6,7 +6,7 @@ interface ResponsiveTextProps {
   variant?: 'title' | 'h1' | 'h2' | 'h3' | 'body' | 'small'
   className?: string
   as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'div'
-  weight?: 'light' | 'regular' | 'medium' | 'bold' | 'extra-bold'
+  weight?: 'light' | 'normal' | 'medium' | 'bold' | 'extrabold'
   color?: string
 }
 
@@ -24,12 +24,20 @@ export const ResponsiveText: React.FC<ResponsiveTextProps> = ({
   variant = 'body',
   className = '',
   as: Component = 'p',
-  weight = 'regular',
+  weight = 'normal',
   color = 'text-primary'
 }) => {
+  const weightClasses = {
+    light: 'font-light',
+    normal: 'font-normal',
+    medium: 'font-medium',
+    bold: 'font-bold',
+    extrabold: 'font-extrabold'
+  }
+
   const combinedClasses = cn(
     variantClasses[variant],
-    `font-${weight}`,
+    weightClasses[weight],
     color,
     className
   )

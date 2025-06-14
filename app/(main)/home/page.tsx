@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ResponsiveWrapper, ResponsiveText } from '@/lib/responsive'
 import { AuthButton } from '@/components/AuthButton'
-import { getSession, signOut } from '@/lib/auth'
+import { getSession, signOut } from '@/lib/auth/auth'
 import { logger } from '@/lib/logger'
 
 export default function MainPage() {
@@ -18,15 +18,15 @@ export default function MainPage() {
         const { session } = await getSession()
         if (!session) {
           logger.info('No session found, redirecting to auth')
-          router.replace('/auth')
+          router.replace('/register')
           return
         }
         
         setUserEmail(session.user.email || null)
         logger.info('User session verified', { userId: session.user.id })
-      } catch (error) {
-        logger.error('Session check error', error)
-        router.replace('/auth')
+              } catch (error) {
+          logger.error({ message: 'Session check error', error: error as Error })
+        router.replace('/register')
       } finally {
         setLoading(false)
       }
@@ -38,8 +38,8 @@ export default function MainPage() {
   const handleSignOut = async () => {
     try {
       await signOut(router)
-    } catch (error) {
-      logger.error('Sign out error', error)
+          } catch (error) {
+        logger.error({ message: 'Sign out error', error: error as Error })
     }
   }
 

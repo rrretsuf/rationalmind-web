@@ -20,31 +20,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let hasInitialized = false;
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event: AuthChangeEvent, session: Session | null) => {
         setSession(session);
         setUser(session?.user ?? null);
         setIsLoading(false);
-        if (!initialized) {
+        if (!hasInitialized) {
           setInitialized(true);
+          hasInitialized = true;
         }
       }
     );
 
     // Initial check
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!initialized) {
+      if (!hasInitialized) {
         setSession(session);
         setUser(session?.user ?? null);
         setIsLoading(false);
         setInitialized(true);
+        hasInitialized = true;
       }
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [initialized]);
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, session, initialized, isLoading }}>

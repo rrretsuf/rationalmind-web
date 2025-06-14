@@ -1,5 +1,5 @@
-import { supabase } from './supabase/client';
-import { logger } from './logger';
+import { supabase } from '../supabase/client';
+import { logger } from '../logger';
 import { AuthError, Session, User } from '@supabase/supabase-js';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 
@@ -18,7 +18,7 @@ export const signUpWithEmail = async (
   const { data, error } = await supabase.auth.signUp({ email, password });
 
   if (error) {
-    logger.error('Email signup failed', error);
+    logger.error({ message: 'Email signup failed', error });
     return { data, error };
   }
 
@@ -38,7 +38,7 @@ export const signInWithEmail = async (
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
-    logger.error('Email signin failed', error);
+    logger.error({ message: 'Email signin failed', error });
     return { data, error };
   }
   
@@ -55,7 +55,7 @@ export const signOut = async (router: AppRouterInstance) => {
   logger.info('Attempting signout');
   const { error } = await supabase.auth.signOut();
   if (error) {
-    logger.error('Signout failed', error);
+    logger.error({ message: 'Signout failed', error });
   } else {
     router.replace('/'); // Redirect to home page on sign out
   }

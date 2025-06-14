@@ -26,13 +26,19 @@ export async function middleware(request: NextRequest) {
           response.cookies.set({ name, value, ...options });
         },
         remove(name: string, options) {
-          request.cookies.set({ name, value: '', ...options });
+          // Properly delete cookies by setting Max-Age to 0 and Expires to past date
+          const deleteOptions = {
+            ...options,
+            maxAge: 0,
+            expires: new Date(0),
+          };
+          request.cookies.set({ name, value: '', ...deleteOptions });
           response = NextResponse.next({
             request: {
               headers: request.headers,
             },
           });
-          response.cookies.set({ name, value: '', ...options });
+          response.cookies.set({ name, value: '', ...deleteOptions });
         },
       },
     }
@@ -43,8 +49,8 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  // Protect main app route - redirect unauthenticated users to landing
-  if (!user && pathname === '/main') {
+  // Protect main app routes - redirect unauthenticated users to landing
+  if (!user && pathname.startsWith('/main')) {
     return NextResponse.redirect(new URL('/', request.url));
   }
 
@@ -53,8 +59,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/main', request.url));
   }
 
-  // If user is logged in and tries to access auth page, redirect to main app
-  if (user && pathname === '/auth') {
+  // If user is logged in and tries to access auth pages, redirect to main app
+  if (user && (pathname === '/register' || pathname.startsWith('/register'))) {
     return NextResponse.redirect(new URL('/main', request.url));
   }
 

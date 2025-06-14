@@ -3,16 +3,28 @@
 import React, { forwardRef } from 'react'
 import { cn } from '@/lib/responsive'
 
-interface AuthInputProps {
+// Controlled component props - if value is provided, onChange is required
+type ControlledProps = {
+  value: string
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+}
+
+// Uncontrolled component props - neither value nor onChange
+type UncontrolledProps = {
+  value?: never
+  onChange?: never
+}
+
+interface BaseAuthInputProps {
   type?: 'email' | 'password' | 'text'
   placeholder?: string
-  value?: string
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
   className?: string
   required?: boolean
   disabled?: boolean
   error?: string
 }
+
+type AuthInputProps = BaseAuthInputProps & (ControlledProps | UncontrolledProps)
 
 export const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(({
   type = 'text',
@@ -25,6 +37,18 @@ export const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(({
   error,
   ...props
 }, ref) => {
+  // Runtime check for proper controlled component usage
+  if (process.env.NODE_ENV === 'development') {
+    if (value !== undefined && !onChange) {
+      console.error(
+        'AuthInput: You provided a `value` prop without an `onChange` handler. ' +
+        'This will render a read-only field. If you want a controlled component, ' +
+        'provide both `value` and `onChange`. If you want an uncontrolled component, ' +
+        'remove the `value` prop and use `defaultValue` instead.'
+      )
+    }
+  }
+
   return (
     <div className="w-full">
       <input

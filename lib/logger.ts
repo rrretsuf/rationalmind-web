@@ -40,25 +40,45 @@ export const logger = {
     });
   },
 
-  error: (message: string, error?: any, extra: Record<string, any> = {}) => {
-    const errorContext = { ...extra, message };
+  error: (
+    messageOrOptions: string | { message: string; error?: Error; extra?: Record<string, any> },
+    error?: Error,
+    extra: Record<string, any> = {}
+  ) => {
+    let message: string;
+    let actualError: Error | undefined;
+    let actualExtra: Record<string, any>;
 
-    if (isDebugMode) {
-      console.error(`[ERROR] ${message}`, { error, ...extra });
+    // Handle object parameter for unambiguous usage
+    if (typeof messageOrOptions === 'object') {
+      message = messageOrOptions.message;
+      actualError = messageOrOptions.error;
+      actualExtra = messageOrOptions.extra || {};
+    } else {
+      // Handle traditional parameters - error must be Error type or undefined
+      message = messageOrOptions;
+      actualError = error;
+      actualExtra = extra;
     }
 
-    if (error instanceof Error) {
-      Sentry.captureException(error, {
+    const errorContext = { ...actualExtra, message };
+
+    if (isDebugMode) {
+      console.error(`[ERROR] ${message}`, { error: actualError, ...actualExtra });
+    }
+
+    if (actualError instanceof Error) {
+      Sentry.captureException(actualError, {
         extra: errorContext,
         level: 'error',
       });
     } else {
-      // Try to create a synthetic error for better grouping
+      // Create a synthetic error for better grouping when no Error object is provided
       try {
         throw new Error(message);
       } catch (syntheticError: any) {
         Sentry.captureException(syntheticError, {
-          extra: { ...errorContext, originalError: error },
+          extra: { ...errorContext, originalError: actualError },
           level: 'error',
         });
       }

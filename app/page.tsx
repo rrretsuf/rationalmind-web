@@ -4,7 +4,7 @@ import React, { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ResponsiveWrapper, ResponsiveText } from '@/lib/responsive'
 import { AuthButton } from '@/components/AuthButton'
-import { getSession } from '@/lib/auth'
+import { getSession } from '@/lib/auth/auth'
 import { logger } from '@/lib/logger'
 
 export default function LandingPage() {
@@ -18,8 +18,8 @@ export default function LandingPage() {
           logger.info('Existing session found, redirecting to home')
           router.replace('/main')
         }
-      } catch (error) {
-        logger.error('Session check error on landing', error)
+              } catch (error) {
+          logger.error({ message: 'Session check error on landing', error: error as Error })
       }
     }
 
@@ -47,7 +47,7 @@ export default function LandingPage() {
                 <span className="text-4xl md:text-5xl font-bold text-primary">🧠</span>
               </div>
               
-              <ResponsiveText variant="title" weight="extra-bold" className="mb-4">
+              <ResponsiveText variant="title" weight="extrabold" className="mb-4">
                 Welcome to
                 <br />
                 <span className="bg-gradient-to-r from-white via-white/90 to-white/70 bg-clip-text text-transparent">

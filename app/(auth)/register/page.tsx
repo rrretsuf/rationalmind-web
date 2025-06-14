@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { AuthInput } from '@/components/AuthInput'
 import { AuthButton } from '@/components/AuthButton'
 import { ResponsiveWrapper, ResponsiveText } from '@/lib/responsive'
-import { signUpWithEmail, signInWithEmail } from '@/lib/auth'
+import { signUpWithEmail, signInWithEmail } from '@/lib/auth/auth'
 import { logger } from '@/lib/logger'
 
 type AuthMode = 'signin' | 'signup'
@@ -57,8 +57,8 @@ export default function AuthPage() {
       if (result.error) {
         setError(result.error.message || 'Authentication failed')
       }
-    } catch (error) {
-      logger.error('Auth error', error)
+          } catch (error) {
+        logger.error({ message: 'Auth error', error: error as Error })
       setError('Something went wrong. Please try again.')
     } finally {
       setLoading(false)

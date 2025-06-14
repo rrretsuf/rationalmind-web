@@ -1,11 +1,32 @@
 import type { Config } from "tailwindcss";
 
-const config: Config = {
+const config = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  safelist: [
+    // ResponsiveGrid component classes
+    'grid-cols-1',
+    'grid-cols-2', 
+    'grid-cols-3',
+    'grid-cols-4',
+    'grid-cols-5',
+    'grid-cols-6',
+    'grid-cols-7',
+    'grid-cols-8',
+    'grid-cols-9',
+    'grid-cols-10',
+    'grid-cols-11',
+    'grid-cols-12',
+    // Gap classes used by ResponsiveGrid
+    'gap-2',
+    'gap-4',
+    'gap-6', 
+    'gap-8',
+    'gap-12'
+  ] as string[],
   theme: {
     // Custom breakpoints synchronized with responsive system
     screens: {
@@ -66,4 +87,4 @@ const config: Config = {
   plugins: [],
 };
 
-export default config; 
+export default config satisfies Config; 
