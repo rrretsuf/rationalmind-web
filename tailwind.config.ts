@@ -7,6 +7,13 @@ const config: Config = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    // Custom breakpoints synchronized with responsive system
+    screens: {
+      'md': '768px',   // Tablet
+      'lg': '1024px',  // Desktop  
+      'xl': '1440px',  // Large desktop
+      '2xl': '1920px', // Extra large
+    },
     extend: {
       colors: {
         // Core Semantic Colors

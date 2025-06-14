@@ -1,0 +1,96 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Centralized Responsive UI Strategy
+
+## 1. Core Principle: Simplified Centralization
+
+All responsive behavior in this application is controlled by a **hybrid approach** that combines:
+- **Tailwind CSS responsive utilities** for styling (95% of cases)
+- **Centralized configuration** in `/lib/responsive/` for logic and key components
+- **Primary focus on mobile UX** with elegant  scaling to larger screens
+
+## 2. Two-Pillar Implementation Strategy
+
+### Method A: Tailwind Responsive Utilities (Primary)
+For most UI elements, use Tailwind's responsive prefixes directly in className:
+
+```tsx
+// Mobile-first approach
+<button className="
+  px-4 py-3 text-sm rounded-lg          // Mobile (default)
+  md:px-6 md:py-3 md:text-base          // Tablet
+  lg:px-8 lg:py-4 lg:text-lg lg:rounded-xl  // Desktop
+">
+  Click Me
+</button>
+```
+
+### Method B: Essential Responsive Components (Selective)
+Use only these centralized components for specific cases:
+
+- `<ResponsiveText>` - For typography with semantic variants
+- `<ResponsiveWrapper>` - For consistent container spacing
+- `<ResponsiveGrid>` - For complex grid layouts
+- `useResponsive()` hook - For conditional logic based on device type
+
+## 3. Implementation Rules
+
+### 3.1. Single Source of Truth
+- **`tailwind.config.ts`** contains all visual design tokens (colors, fonts, spacing)
+- **`/lib/responsive/responsive.config.ts`** contains only breakpoint definitions
+- These two files are synchronized and must remain consistent
+
+### 3.2. Smart Usage Guidelines
+- **Use Tailwind utilities** for: buttons, inputs, cards, layout, spacing, colors
+- **Use responsive components** for: semantic typography, complex grids, consistent wrappers
+- **Use useResponsive hook** for: conditional rendering, device-specific logic
+
+### 3.3. Absolute Prohibitions
+- ❌ Never use CSS media queries (`@media`) in component files
+- ❌ Never hardcode pixel values for responsive behavior
+- ❌ Never create new responsive components without strong justification
+- ❌ Never ignore mobile-first approach
+
+## 4. Code Examples
+### ✅ Correct - Simple Button
+```tsx
+<button className="
+  h-12 px-4 py-3 text-sm rounded-lg
+  md:h-12 md:px-6 md:text-base
+  lg:h-14 lg:px-8 lg:text-lg lg:rounded-xl
+  bg-blue-600 hover:bg-blue-700 text-white
+">
+  Action
+</button>
+```
+
+### ✅ Correct - Using Components
+```tsx
+<ResponsiveWrapper padding="lg">
+  <ResponsiveText variant="title" as="h1">
+    Welcome
+  </ResponsiveText>
+  <ResponsiveGrid cols={{ mobile: 1, desktop: 3 }}>
+    {/* Grid items */}
+  </ResponsiveGrid>
+</ResponsiveWrapper>
+```
+
+### ✅ Correct - Conditional Logic
+```tsx
+const { isMobile } = useResponsive()
+return isMobile ? <MobileMenu /> : <DesktopMenu />
+```
+
+## 5. Evolution Guidelines
+
+The system can be enhanced within these constraints:
+- Add new variants to existing responsive components
+- Extend breakpoint definitions in both config files
+- Add new design tokens to tailwind.config.ts
+- **Always maintain architectural simplicity**
+
+This strategy maximizes performance, maintains centralization, and ensures exceptional mobile UX while scaling beautifully to larger screens.
